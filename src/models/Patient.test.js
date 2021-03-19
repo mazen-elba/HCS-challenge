@@ -20,57 +20,56 @@ afterEach(async () => {
   await dbManager.cleanup();
 });
 
-describe("findById", () => {
+describe("findByPatientId", () => {
   test("should return the correct document by ID", async () => {
     const { patient2 } = await createPatients();
-    const result = await patient.findById(patient2._id);
+    const result = await patient.findByPatientId(patient2.memberId);
     expect(result).toMatchObject(patient2);
   });
+});
 
-  test("should return null if a document with the provided ID could not be found", async () => {
-    const result = await patient.findById("12045");
-    expect(result).toBeNull();
+describe("findByFirstName", () => {
+  test("should verify patient WITH first name", async () => {
+    const { patient2 } = await createPatients();
+    const result = await patient.findByFirstName(patient2.firstName);
+    expect(result).toMatchObject({ firstName: "LOAD" });
+  });
+
+  test("should verify patient WITHOUT first name", async () => {
+    const { patient1 } = await createPatients();
+    const result = await patient.findByFirstName(patient1.firstName);
+    expect(result).toMatchObject({ firstName: "" });
   });
 });
 
-describe("findByIds", () => {
-  test("should return the correct documents by ID", async () => {
-    const { patient1, patient5 } = await createPatients();
-    const result = await patient.findByIds([patient1._id, patient5._id]);
-    expect(result).toMatchObject([patient1, patient5]);
+describe("findByEmailAddress", () => {
+  test("should verify patient WITH email address", async () => {
+    const { patient3 } = await createPatients();
+    const result = await patient.findByEmailAddress(patient3.emailAddress);
+    expect(result).toMatchObject({
+      emailAddress: "test2@humancaresystems.com",
+    });
   });
 
-  test("should return empty array if documents with the provided IDs could not be found", async () => {
-    const result = await patient.findByIds(["512351532"]);
-    expect(result).toEqual([]);
+  test("should verify patient WITHOUT email address", async () => {
+    const { patient1 } = await createPatients();
+    const result = await patient.findByEmailAddress(patient1.emailAddress);
+    expect(result).toMatchObject({ emailAddress: "" });
   });
 });
 
-describe("serialize", () => {
-  //   test("should return the correct shape", async () => {
-  //     const { patient4 } = await createPatients();
-  //     const result = await patient.serialize(patient4._id);
-
-  //     expect(result).toMatchObject({
-  //       id: String(patient4._id),
-  //       memberId: 12245,
-  //       firstName: "LOAD",
-  //       emailAddress: "test3@humancaresystems.com",
-  //       consent: "Y",
-  //     });
-  //   });
-
-  test("should return Patient ID", async () => {
-    const { patient4 } = await createPatients();
-    const { patientId } = await patient.serialize(patient4._Id);
-    expect(patientId).toBe(12245);
+describe("findByConsent", () => {
+  test("should verify patient with consent YES", async () => {
+    const { patient3 } = await createPatients();
+    const result = await patient.findByConsent(patient3.consent);
+    expect(result).toMatchObject({ consent: "Y" });
   });
 
-  // test("should return null if no Patient ID found", async () => {
-  //   const { patient4 } = await createPatients();
-  //   const { patientId } = await patient.serialize(patient4._id);
-  //   expect(patientId).toEqual([]);
-  // });
+  test("should verify patient with consent NO", async () => {
+    const { patient5 } = await createPatients();
+    const result = await patient.findByConsent(patient5.consent);
+    expect(result).toMatchObject({ consent: "N" });
+  });
 });
 
 // Insert Patients Data into DB
@@ -80,7 +79,7 @@ async function createPatients() {
     dataSource: "WEB 3RD PARTY",
     cardNumber: 342121211,
     memberId: 43233,
-    firstName: "LOAD",
+    firstName: "",
     lastName: "TEST 0",
     dob: "04/29/2000",
     addressOne: "3100 S Ashley Drive",
@@ -89,7 +88,7 @@ async function createPatients() {
     state: "AZ",
     zipCode: 85286,
     telephoneNumber: "",
-    emailAddress: "test0@humancaresystems.com",
+    emailAddress: "",
     consent: "Y",
     mobilePhone: 1234567912,
   });
@@ -146,7 +145,7 @@ async function createPatients() {
     state: "AZ",
     zipCode: 85286,
     telephoneNumber: "",
-    emailAddress: "test3@humancaresystems.com",
+    emailAddress: "",
     consent: "Y",
     mobilePhone: 6177504303,
   });

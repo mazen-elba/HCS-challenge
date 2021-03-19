@@ -2,7 +2,8 @@ const { MongoClient } = require("mongodb");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 
 // Extend default timeout to allow MongoDB binary download
-jest.setTimeout(60000);
+// jest.setTimeout(60000);
+jest.useFakeTimers();
 
 export default class DBManager {
   constructor() {
