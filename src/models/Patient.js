@@ -5,21 +5,21 @@ export default class Patient {
     this.collection = db.collection(this.collectionName);
   }
 
-  findByPatientId(id) {
-    return this.collection.findOne({ memberId: id });
+  findById(id) {
+    return this.collection.findOne({ _id: id });
   }
 
-  findByFirstName(name) {
-    return this.collection.findOne({ firstName: name });
-  }
+  // findByFirstName(name) {
+  //   return this.collection.findOne({ firstName: name });
+  // }
 
-  findByEmailAddress(email) {
-    return this.collection.findOne({ emailAddress: email });
-  }
+  // findByEmailAddress(email) {
+  //   return this.collection.findOne({ emailAddress: email });
+  // }
 
-  findByConsent(consentChoice) {
-    return this.collection.findOne({ consent: consentChoice });
-  }
+  // findByConsent(consentChoice) {
+  //   return this.collection.findOne({ consent: consentChoice });
+  // }
 
   /**
    * Return a Custom Patient Object

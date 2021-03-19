@@ -1,5 +1,6 @@
 import DBManager from "../testUtils/db-manager";
 import Patient from "./Patient";
+import Email from "./Email";
 
 const dbManager = new DBManager();
 
@@ -12,65 +13,123 @@ afterAll(async () => {
 });
 
 let patient;
+let email;
+
 beforeEach(async () => {
   patient = new Patient(dbManager.db);
+  email = new Email(dbManager.db);
 });
 
 afterEach(async () => {
   await dbManager.cleanup();
 });
 
-describe("findByPatientId", () => {
-  test("should return the correct document by ID", async () => {
-    const { patient2 } = await createPatients();
-    const result = await patient.findByPatientId(patient2.memberId);
-    expect(result).toMatchObject(patient2);
+describe("findById", () => {
+  test("should return correct patient document by ID", async () => {
+    const { patient1 } = await createPatients();
+    const result = await patient.findById(patient1._id);
+    expect(result).toMatchObject(patient1);
   });
-});
 
-describe("findByFirstName", () => {
+  test("should return null if document with provided ID not be found", async () => {
+    const result = await patient.findById("1234");
+    expect(result).toBeNull();
+  });
+
   test("should verify patient WITH first name", async () => {
-    const { patient2 } = await createPatients();
-    const result = await patient.findByFirstName(patient2.firstName);
-    expect(result).toMatchObject({ firstName: "LOAD" });
+    const { patient1 } = await createPatients();
+    const result = await patient.findById(patient1._id);
+    expect(result.firstName).not.toBe("");
   });
 
   test("should verify patient WITHOUT first name", async () => {
-    const { patient1 } = await createPatients();
-    const result = await patient.findByFirstName(patient1.firstName);
-    expect(result).toMatchObject({ firstName: "" });
+    const { patient2 } = await createPatients();
+    const result = await patient.findById(patient2._id);
+    expect(result.firstName).toBe("");
+    console.log(
+      `ALERT: patient missing first name | Patient ID: ${result.memberId}`
+    );
   });
-});
 
-describe("findByEmailAddress", () => {
-  test("should verify patient WITH email address", async () => {
+  test("should verify emails created in EMAIL collection for patients WITH consent YES", async () => {
     const { patient3 } = await createPatients();
-    const result = await patient.findByEmailAddress(patient3.emailAddress);
-    expect(result).toMatchObject({
-      emailAddress: "test2@humancaresystems.com",
-    });
+    const result = await patient.findById(patient3._id);
+    expect(result.emailAddress).not.toBe("");
+
+    if (result.consent === "Y") {
+      // [] add email address to collection
+      const { email5 } = await createEmails();
+      await email.addEmailToCollection(email5);
+      console.log(
+        `NEW email added to Email collection | Patient ID: ${result.memberId}`
+      );
+
+      // [] trigger email scheduler
+    }
+  });
+
+  test("should verify emails for each patient scheduled correctly", async () => {
+    const { email5 } = await createEmails();
+    const emailObj = await email.findById(email5._id);
+    expect(emailObj).toMatchObject(email5);
+    console.log(emailObj);
   });
 
   test("should verify patient WITHOUT email address", async () => {
-    const { patient1 } = await createPatients();
-    const result = await patient.findByEmailAddress(patient1.emailAddress);
-    expect(result).toMatchObject({ emailAddress: "" });
+    const { patient4 } = await createPatients();
+    const result = await patient.findById(patient4._id);
+    expect(result.emailAddress).toBe("");
+
+    if (result.consent === "Y") {
+      console.log(
+        `ALERT: patient missing email address with YES consent | Patient ID: ${result.memberId}`
+      );
+    }
   });
 });
 
-describe("findByConsent", () => {
-  test("should verify patient with consent YES", async () => {
-    const { patient3 } = await createPatients();
-    const result = await patient.findByConsent(patient3.consent);
-    expect(result).toMatchObject({ consent: "Y" });
+async function createEmails() {
+  const second = 1000;
+  const minute = second * 60;
+  const hour = minute * 60;
+  const day = hour * 24;
+
+  const countDays = () => {
+    let iniDate = new Date();
+    let endDate = new Date();
+
+    let diff = endDate.getTime() - iniDate.getTime();
+
+    return diff;
+  };
+
+  const email1 = await dbManager.createDoc(email.collectionName, {
+    name: "Day 1",
+    scheduled_date: `${countDays() + 1} day(s)`,
   });
 
-  test("should verify patient with consent NO", async () => {
-    const { patient5 } = await createPatients();
-    const result = await patient.findByConsent(patient5.consent);
-    expect(result).toMatchObject({ consent: "N" });
+  const email2 = await dbManager.createDoc(email.collectionName, {
+    name: "Day 2",
+    scheduled_date: `${countDays() + 2} day(s)`,
   });
-});
+
+  const email3 = await dbManager.createDoc(email.collectionName, {
+    name: "Day 3",
+    scheduled_date: `${countDays() + 3} day(s)`,
+  });
+
+  const email4 = await dbManager.createDoc(email.collectionName, {
+    name: "Day 4",
+    scheduled_date: `${countDays() + 4} day(s)`,
+  });
+
+  const email5 = await dbManager.createDoc(email.collectionName, {
+    name: "Day 5",
+    scheduled_date: `${countDays() + 5} day(s)`,
+  });
+
+  return { email1, email2, email3, email4, email5 };
+}
 
 // Insert Patients Data into DB
 async function createPatients() {
@@ -79,7 +138,7 @@ async function createPatients() {
     dataSource: "WEB 3RD PARTY",
     cardNumber: 342121211,
     memberId: 43233,
-    firstName: "",
+    firstName: "LOAD",
     lastName: "TEST 0",
     dob: "04/29/2000",
     addressOne: "3100 S Ashley Drive",
@@ -98,7 +157,7 @@ async function createPatients() {
     dataSource: "WEB 3RD PARTY",
     cardNumber: 564232340,
     memberId: 12045,
-    firstName: "LOAD",
+    firstName: "",
     lastName: "TEST 1",
     dob: "03/20/1969",
     addressOne: "3100 S Ashley Drive",
