@@ -24,60 +24,36 @@ afterEach(async () => {
   await dbManager.cleanup();
 });
 
-describe("findById", () => {
-  test("should return correct patient document by ID", async () => {
+describe("fetchPatientById", () => {
+  test("should verify correct patient object by ID", async () => {
     const { patient1 } = await createPatients();
-    const result = await patient.findById(patient1._id);
-    expect(result).toMatchObject(patient1);
+    const result = await patient.fetchPatientById(patient1._id);
+    expect(result._id).toMatchObject(patient1._id);
   });
 
-  test("should return null if document with provided ID not be found", async () => {
-    const result = await patient.findById("1234");
+  test("should return null if object with provided ID not found", async () => {
+    const result = await patient.fetchPatientById("1234");
     expect(result).toBeNull();
-  });
-
-  test("should verify patient WITH first name", async () => {
-    const { patient1 } = await createPatients();
-    const result = await patient.findById(patient1._id);
-    expect(result.firstName).not.toBe("");
   });
 
   test("should verify patient WITHOUT first name", async () => {
     const { patient2 } = await createPatients();
-    const result = await patient.findById(patient2._id);
+    const result = await patient.fetchPatientById(patient2._id);
     expect(result.firstName).toBe("");
     console.log(
       `ALERT: patient missing first name | Patient ID: ${result.memberId}`
     );
   });
 
-  test("should verify emails created in EMAIL collection for patients WITH consent YES", async () => {
-    const { patient3 } = await createPatients();
-    const result = await patient.findById(patient3._id);
-    expect(result.emailAddress).not.toBe("");
-
-    if (result.consent === "Y") {
-      // [] add email address to collection
-      const { email5 } = await createEmails();
-      await email.addEmailToCollection(email5);
-      console.log(
-        `NEW email added to Email collection | Patient ID: ${result.memberId}`
-      );
-
-      // [] trigger email scheduler
-    }
-  });
-
-  test("should verify emails for each patient scheduled correctly", async () => {
-    const { email5 } = await createEmails();
-    const emailObj = await email.findById(email5._id);
-    expect(emailObj).toMatchObject(email5);
-    console.log(emailObj);
+  test("should verify patient WITH first name", async () => {
+    const { patient1 } = await createPatients();
+    const result = await patient.fetchPatientById(patient1._id);
+    expect(result.firstName).not.toBe("");
   });
 
   test("should verify patient WITHOUT email address", async () => {
     const { patient4 } = await createPatients();
-    const result = await patient.findById(patient4._id);
+    const result = await patient.fetchPatientById(patient4._id);
     expect(result.emailAddress).toBe("");
 
     if (result.consent === "Y") {
@@ -85,6 +61,30 @@ describe("findById", () => {
         `ALERT: patient missing email address with YES consent | Patient ID: ${result.memberId}`
       );
     }
+  });
+
+  test("should verify emails created in EMAIL collection for patients WITH consent YES", async () => {
+    const { patient3 } = await createPatients();
+    const result = await patient.fetchPatientById(patient3._id);
+    expect(result.emailAddress).not.toBe("");
+
+    if (result.consent === "Y") {
+      // [] trigger email scheduler
+      const { email5 } = await createEmails();
+
+      // [x] add/upload scheduled email to database (Emails collection)
+      await email.uploadEmails(email5);
+      console.log(
+        `NEW email added to EMAIL collection | Patient ID: ${result.memberId}`
+      );
+    }
+  });
+
+  test("should verify emails for each patient scheduled correctly", async () => {
+    const { email5 } = await createEmails();
+    const emailObj = await email.fetchEmailById(email5._id);
+    expect(emailObj).toMatchObject(email5);
+    console.log(emailObj);
   });
 });
 

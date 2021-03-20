@@ -5,36 +5,7 @@ export default class Patient {
     this.collection = db.collection(this.collectionName);
   }
 
-  findById(id) {
+  fetchPatientById(id) {
     return this.collection.findOne({ _id: id });
   }
-
-  // findByFirstName(name) {
-  //   return this.collection.findOne({ firstName: name });
-  // }
-
-  // findByEmailAddress(email) {
-  //   return this.collection.findOne({ emailAddress: email });
-  // }
-
-  // findByConsent(consentChoice) {
-  //   return this.collection.findOne({ consent: consentChoice });
-  // }
-
-  /**
-   * Return a Custom Patient Object
-   * @param {ObjectID} patientId
-   */
-  // async serialize(id) {
-  //   const patient = await this.findById(id);
-  //   // const patientId = await this.findById(patient.memberId);
-  //   // const name = await this.findByIds(patient.name);
-  //   // const emailAddress = await this.findByIds(patient.emailAddress);
-  //   // const consentChoice = await this.findByIds(patient.consentChoice);
-
-  //   return {
-  //     id: patient._id.toString(),
-  //     patientId: patient.memberId,
-  //   };
-  // }
 }

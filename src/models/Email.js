@@ -5,12 +5,12 @@ export default class Email {
     this.collection = db.collection(this.collectionName);
   }
 
-  findById(id) {
+  fetchEmailById(id) {
     return this.collection.findOne({ _id: id });
   }
 
-  addEmailToCollection(emailId) {
-    const email = this.findById(emailId);
+  uploadEmails(emailId) {
+    const email = this.fetchEmailById(emailId);
 
     return this.collection.insertOne({
       id: email._id,
