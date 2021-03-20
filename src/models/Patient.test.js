@@ -103,27 +103,27 @@ async function createEmails() {
     return diff;
   };
 
-  const email1 = await dbManager.createDoc(email.collectionName, {
+  const email1 = await dbManager.createDocs(email.collectionName, {
     name: "Day 1",
     scheduled_date: `${countDays() + 1} day(s)`,
   });
 
-  const email2 = await dbManager.createDoc(email.collectionName, {
+  const email2 = await dbManager.createDocs(email.collectionName, {
     name: "Day 2",
     scheduled_date: `${countDays() + 2} day(s)`,
   });
 
-  const email3 = await dbManager.createDoc(email.collectionName, {
+  const email3 = await dbManager.createDocs(email.collectionName, {
     name: "Day 3",
     scheduled_date: `${countDays() + 3} day(s)`,
   });
 
-  const email4 = await dbManager.createDoc(email.collectionName, {
+  const email4 = await dbManager.createDocs(email.collectionName, {
     name: "Day 4",
     scheduled_date: `${countDays() + 4} day(s)`,
   });
 
-  const email5 = await dbManager.createDoc(email.collectionName, {
+  const email5 = await dbManager.createDocs(email.collectionName, {
     name: "Day 5",
     scheduled_date: `${countDays() + 5} day(s)`,
   });
@@ -133,7 +133,7 @@ async function createEmails() {
 
 // Insert Patients Data into DB
 async function createPatients() {
-  const patient1 = await dbManager.createDoc(patient.collectionName, {
+  const patient1 = await dbManager.createDocs(patient.collectionName, {
     programId: 50777445,
     dataSource: "WEB 3RD PARTY",
     cardNumber: 342121211,
@@ -152,7 +152,7 @@ async function createPatients() {
     mobilePhone: 1234567912,
   });
 
-  const patient2 = await dbManager.createDoc(patient.collectionName, {
+  const patient2 = await dbManager.createDocs(patient.collectionName, {
     programId: 50777445,
     dataSource: "WEB 3RD PARTY",
     cardNumber: 564232340,
@@ -171,7 +171,7 @@ async function createPatients() {
     mobilePhone: 1234567890,
   });
 
-  const patient3 = await dbManager.createDoc(patient.collectionName, {
+  const patient3 = await dbManager.createDocs(patient.collectionName, {
     programId: 50777445,
     dataSource: "WEB 3RD PARTY",
     cardNumber: 564232341,
@@ -190,7 +190,7 @@ async function createPatients() {
     mobilePhone: 6177504302,
   });
 
-  const patient4 = await dbManager.createDoc(patient.collectionName, {
+  const patient4 = await dbManager.createDocs(patient.collectionName, {
     programId: 50777445,
     dataSource: "WEB 3RD PARTY",
     cardNumber: 564232342,
@@ -209,7 +209,7 @@ async function createPatients() {
     mobilePhone: 6177504303,
   });
 
-  const patient5 = await dbManager.createDoc(patient.collectionName, {
+  const patient5 = await dbManager.createDocs(patient.collectionName, {
     programId: 50777445,
     dataSource: "WEB 3RD PARTY",
     cardNumber: 564232343,
@@ -228,7 +228,7 @@ async function createPatients() {
     mobilePhone: 6177504384,
   });
 
-  const patient6 = await dbManager.createDoc(patient.collectionName, {
+  const patient6 = await dbManager.createDocs(patient.collectionName, {
     programId: 50777445,
     dataSource: "WEB 3RD PARTY",
     cardNumber: 564232344,

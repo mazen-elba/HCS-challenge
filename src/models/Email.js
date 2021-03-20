@@ -12,7 +12,7 @@ export default class Email {
   uploadEmails(emailId) {
     const email = this.fetchEmailById(emailId);
 
-    return this.collection.insertOne({
+    return this.collection.insert({
       id: email._id,
       name: email.name,
       scheduled_date: email.scheduled_date,
