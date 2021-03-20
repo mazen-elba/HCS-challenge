@@ -43,40 +43,13 @@ export default class DBManager {
    * @param {string} collectionName
    * @param {Object} document
    */
-  async createDocs(collectionName, document) {
+  async createDocs(collectionName, documents) {
     const { ops } = await this.db
       .collection(collectionName)
-      .insertOne(document); // insertMany takes an array of objects
+      .insertMany(documents);
+    // .insertMany(document); // insertMany takes an array of objects
 
-    return ops[0];
+    return ops; // all documents
+    // return ops[0]; // first document only
   }
 }
-
-// EMAIL collection (subdocument)
-// db.posts.update(
-//   { _id: ObjectId("510a3c5382d395b70b000034") },
-//   {
-//     $push: {
-//       comments: {
-//         _id: ObjectId("..."),
-//         name: ObjectId("..."),
-//         scheduled_date: "",
-//       },
-//     },
-//   }
-// );
-
-// db.t.update(
-//   {
-//     _id: "2",
-//     "workspace.name": "3",
-//   },
-//   {
-//     $push: {
-//       "workspace.$.widgets": {
-//         id: "2",
-//         blabla: "blabla",
-//       },
-//     },
-//   }
-// );
