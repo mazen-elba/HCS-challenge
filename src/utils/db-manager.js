@@ -1,8 +1,6 @@
 const { MongoClient } = require("mongodb");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 
-// Extend default timeout to allow MongoDB binary download
-// jest.setTimeout(60000);
 jest.useFakeTimers();
 
 export default class DBManager {
@@ -41,13 +39,12 @@ export default class DBManager {
   /**
    * Manually Insert a Document into DB and Return Created Document
    * @param {string} collectionName
-   * @param {Object} document
+   * @param {Object[]} documents
    */
   async createDocs(collectionName, documents) {
     const { ops } = await this.db
-      .collection(collectionName)
+      .collection(collectionName) // patients *or* emails
       .insertMany(documents);
-    // .insertMany(document); // insertMany takes an array of objects
 
     return ops; // all documents
     // return ops[0]; // first document only

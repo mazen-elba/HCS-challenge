@@ -5,7 +5,11 @@ export default class Patient {
     this.collection = db.collection(this.collectionName);
   }
 
-  fetchPatientById(id) {
-    return this.collection.findOne({ _id: id });
+  /**
+   * Find a specific patient object by ID
+   * @param {ObjectID} patientId
+   */
+  fetchPatientById(patientId) {
+    return this.collection.findOne({ _id: patientId });
   }
 }

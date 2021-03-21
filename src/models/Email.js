@@ -5,7 +5,11 @@ export default class Email {
     this.collection = db.collection(this.collectionName);
   }
 
-  fetchEmailById(id) {
-    return this.collection.findOne({ _id: id });
+  /**
+   * Find a specific email object by ID
+   * @param {ObjectID} emailId
+   */
+  fetchEmailById(emailId) {
+    return this.collection.findOne({ _id: emailId });
   }
 }
